@@ -25,13 +25,15 @@ namespace Plk.Blazor.DragDrop
             {
                 if (CopyItem == null)
                 {
-                    DragDropService.Items.Remove(activeItem);
+                    if (!NoListChange)
+                        DragDropService.Items.Remove(activeItem);
                 }
             }
             else // same dropzone drop
             {
                 sameDropZone = true;
-                Items.RemoveAt(oldIndex);
+                if (!NoListChange)
+                    Items.RemoveAt(oldIndex);
                 // the actual index could have shifted due to the removal
                 if (newIndex > oldIndex)
                     newIndex--;
@@ -39,12 +41,26 @@ namespace Plk.Blazor.DragDrop
 
             if (CopyItem == null)
             {
-                Items.Insert(newIndex, activeItem);
+                if (!NoListChange) 
+                    Items.Insert(newIndex, activeItem);
             }
             else
             {
                 // for the same zone - do not call CopyItem
-                Items.Insert(newIndex, sameDropZone ? activeItem : CopyItem(activeItem));
+                if (!NoListChange) 
+                    Items.Insert(newIndex, sameDropZone ? activeItem : CopyItem(activeItem));
+            }
+
+            if (NoListChange)
+            {
+                if (sameDropZone)
+                {
+                    OnNoListChangeItemDropSameZone.InvokeAsync(new ItemDropSameZoneArgs<TItem>(activeItem, newIndex, Id));
+                }
+                else
+                {
+                    OnNoListChangeItemDropDifferentZone.InvokeAsync(new ItemDropDifferentZoneArgs<TItem>(activeItem, newIndex, DragDropService.DropZoneId, Id));
+                }
             }
 
             //Operation is finished
@@ -158,6 +174,7 @@ namespace Plk.Blazor.DragDrop
             DragDropService.ShouldRender = true;
             DragDropService.ActiveItem = item;
             DragDropService.Items = Items;
+            DragDropService.DropZoneId = Id;
             StateHasChanged();
             DragDropService.ShouldRender = false;
         }
@@ -250,6 +267,32 @@ namespace Plk.Blazor.DragDrop
         /// </summary>
         [Parameter]
         public EventCallback<TItem> OnItemDrop { get; set; }
+
+
+
+
+
+        [Parameter]
+        public EventCallback<ItemDropSameZoneArgs<TItem>> OnNoListChangeItemDropSameZone { get; set; }
+
+        [Parameter]
+        public EventCallback<ItemDropDifferentZoneArgs<TItem>> OnNoListChangeItemDropDifferentZone { get; set; }
+
+        [Parameter]
+        public EventCallback<ItemSwitchSameZoneArgs<TItem>> OnNoListChangeItemSwitchSameZone { get; set; }
+
+
+
+        
+        [Parameter]
+        public bool NoListChange { get; set; } = false;
+
+
+
+
+
+
+
 
         /// <summary>
         /// Raises a callback with the replaced item as parameter
@@ -347,12 +390,16 @@ namespace Plk.Blazor.DragDrop
                 {
                     if (CopyItem == null)
                     {
-                        Items.Insert(Items.Count, activeItem); //insert item to new zone
-                        DragDropService.Items.Remove(activeItem); //remove from old zone
+                        if (!NoListChange)
+                        {
+                            Items.Insert(Items.Count, activeItem); //insert item to new zone
+                            DragDropService.Items.Remove(activeItem); //remove from old zone
+                        }
                     }
                     else
                     {
-                        Items.Insert(Items.Count, CopyItem(activeItem)); //insert item to new zone
+                        if (!NoListChange) 
+                            Items.Insert(Items.Count, CopyItem(activeItem)); //insert item to new zone
                     }
                 }
                 else
@@ -400,27 +447,50 @@ namespace Plk.Blazor.DragDrop
             var indexActiveItem = Items.IndexOf(activeItem);
             if (indexActiveItem == -1) // item is new to the dropzone
             {
-                //insert into new zone
-                Items.Insert(indexDraggedOverItem + 1, activeItem);
-                //remove from old zone
-                DragDropService.Items.Remove(activeItem);
+                if (!NoListChange)
+                {
+                    //insert into new zone
+                    Items.Insert(indexDraggedOverItem + 1, activeItem);
+                    //remove from old zone
+                    DragDropService.Items.Remove(activeItem);
+                }
+                else
+                {
+                    OnNoListChangeItemDropDifferentZone.InvokeAsync(new ItemDropDifferentZoneArgs<TItem>(activeItem, indexDraggedOverItem + 1, Id, DragDropService.DropZoneId));
+                }
             }
             else if (InstantReplace) //swap the items
             {
                 if (indexDraggedOverItem == indexActiveItem)
                     return;
-                TItem tmp = Items[indexDraggedOverItem];
-                Items[indexDraggedOverItem] = Items[indexActiveItem];
-                Items[indexActiveItem] = tmp;
-                OnReplacedItemDrop.InvokeAsync(Items[indexActiveItem]);
+
+                if (!NoListChange)
+                {
+                    TItem tmp = Items[indexDraggedOverItem];
+                    Items[indexDraggedOverItem] = Items[indexActiveItem];
+                    Items[indexActiveItem] = tmp;
+                    OnReplacedItemDrop.InvokeAsync(Items[indexActiveItem]);
+                }
+                else
+                {
+                    OnNoListChangeItemSwitchSameZone.InvokeAsync(new ItemSwitchSameZoneArgs<TItem>(activeItem, draggedOverItem, Id));
+                }
             }
             else //no instant replace, just insert it after 
             {
                 if (indexDraggedOverItem == indexActiveItem)
                     return;
-                var tmp = Items[indexActiveItem];
-                Items.RemoveAt(indexActiveItem);
-                Items.Insert(indexDraggedOverItem, tmp);
+
+                if (!NoListChange)
+                {
+                    var tmp = Items[indexActiveItem];
+                    Items.RemoveAt(indexActiveItem);
+                    Items.Insert(indexDraggedOverItem, tmp);
+                }
+                else
+                {
+                    OnNoListChangeItemDropSameZone.InvokeAsync(new ItemDropSameZoneArgs<TItem>(activeItem, indexDraggedOverItem, Id));
+                }
             }
         }
 

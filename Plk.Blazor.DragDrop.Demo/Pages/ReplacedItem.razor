@@ -12,7 +12,17 @@
 <hr />
 
 <div class="grid-container">
-    <Dropzone Items="Items" InstantReplace="true" TItem="string" OnItemDrop="@((p)=>OnItemDrop(p))" OnReplacedItemDrop="@((p)=>OnReplacedItemDrop(p))">
+    <Dropzone Id="qqq" Items="Items" InstantReplace="true" TItem="string" OnItemDrop="@((p)=>OnItemDrop(p, "dp1"))" OnReplacedItemDrop="@((p)=>OnReplacedItemDrop(p, "dp1"))">
+        <div>
+            <div class="grid-item">@context</div>
+        </div>
+    </Dropzone>
+</div>
+<br />
+<br />
+<br />
+<div class="grid-container">
+    <Dropzone Id="xyz" Items="Items2" InstantReplace="true" TItem="string" OnItemDrop="@((p)=>OnItemDrop(p, "dp2"))" OnReplacedItemDrop="@((p)=>OnReplacedItemDrop(p, "dp2"))">
         <div>
             <div class="grid-item">@context</div>
         </div>
@@ -34,14 +44,23 @@
         "8",
         "9",
     };
-    public void OnItemDrop(string item)
+
+    public List<string> Items2 = new List<string>()
     {
-        DropedItem = item;
+        "10",
+        "11",
+        "12",
+        "13",
+    };
+
+    public void OnItemDrop(string item, string id)
+    {
+        DropedItem = $"{item} ({id})";
         StateHasChanged();
     }
-    public void OnReplacedItemDrop(string item)
+    public void OnReplacedItemDrop(string item, string id)
     {
-        replacedItem = item;
+        replacedItem = $"{item} ({id})";
         StateHasChanged();
     }
 }

@@ -22,6 +22,8 @@ namespace Plk.Blazor.DragDrop
         /// </summary>
         public IList<T> Items { get; set; }
 
+        public string DropZoneId { get; set; }
+
         /// <summary>
         /// Holds the id of the Active Spacing div
         /// </summary>

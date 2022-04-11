@@ -1,18 +1,18 @@
-﻿namespace Plk.Blazor.DragDrop;
+﻿using System.Collections.Generic;
+
+namespace Plk.Blazor.DragDrop;
 
 public class ItemDropDifferentZoneArgs<TItem>
 {
     public TItem Item { get; }
     public int InsertIndex { get; }
-    public string FromDropZoneId { get; }
-    public string ToDropZoneId { get; }
+    public IList<TItem> FromItems { get; }
 
-    public ItemDropDifferentZoneArgs(TItem item, int insertIndex, string fromDropZoneId, string toDropZoneId)
+    public ItemDropDifferentZoneArgs(TItem item, int insertIndex, IList<TItem> fromItems)
     {
         Item = item;
         InsertIndex = insertIndex;
-        FromDropZoneId = fromDropZoneId;
-        ToDropZoneId = toDropZoneId;
+        FromItems = fromItems;
     }
 
 }

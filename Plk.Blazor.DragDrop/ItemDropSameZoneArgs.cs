@@ -3,13 +3,11 @@
 public class ItemDropSameZoneArgs<TItem>
 {
     public TItem Item { get; }
-    public string DropZoneId { get; }
     public int InsertIndex { get; }
 
-    public ItemDropSameZoneArgs(TItem item, int insertIndex, string dropZoneId)
+    public ItemDropSameZoneArgs(TItem item, int insertIndex)
     {
         InsertIndex = insertIndex;
-        DropZoneId = dropZoneId;
         Item = item;
     }
 }

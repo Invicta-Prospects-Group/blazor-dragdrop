@@ -55,11 +55,11 @@ namespace Plk.Blazor.DragDrop
             {
                 if (sameDropZone)
                 {
-                    OnNoListChangeItemDropSameZone.InvokeAsync(new ItemDropSameZoneArgs<TItem>(activeItem, newIndex, Id));
+                    OnNoListChangeItemDropSameZone.InvokeAsync(new ItemDropSameZoneArgs<TItem>(activeItem, newIndex));
                 }
                 else
                 {
-                    OnNoListChangeItemDropDifferentZone.InvokeAsync(new ItemDropDifferentZoneArgs<TItem>(activeItem, newIndex, DragDropService.DropZoneId, Id));
+                    OnNoListChangeItemDropDifferentZone.InvokeAsync(new ItemDropDifferentZoneArgs<TItem>(activeItem, newIndex, DragDropService.Items));
                 }
             }
 
@@ -174,7 +174,6 @@ namespace Plk.Blazor.DragDrop
             DragDropService.ShouldRender = true;
             DragDropService.ActiveItem = item;
             DragDropService.Items = Items;
-            DragDropService.DropZoneId = Id;
             StateHasChanged();
             DragDropService.ShouldRender = false;
         }
@@ -269,7 +268,11 @@ namespace Plk.Blazor.DragDrop
         public EventCallback<TItem> OnItemDrop { get; set; }
 
 
-
+        public void Reset()
+        {
+            //base.StateHasChanged();
+            DragDropService.Reset();
+        }
 
 
         [Parameter]
@@ -456,7 +459,7 @@ namespace Plk.Blazor.DragDrop
                 }
                 else
                 {
-                    OnNoListChangeItemDropDifferentZone.InvokeAsync(new ItemDropDifferentZoneArgs<TItem>(activeItem, indexDraggedOverItem + 1, Id, DragDropService.DropZoneId));
+                    OnNoListChangeItemDropDifferentZone.InvokeAsync(new ItemDropDifferentZoneArgs<TItem>(activeItem, indexDraggedOverItem + 1, DragDropService.Items));
                 }
             }
             else if (InstantReplace) //swap the items
@@ -473,7 +476,7 @@ namespace Plk.Blazor.DragDrop
                 }
                 else
                 {
-                    OnNoListChangeItemSwitchSameZone.InvokeAsync(new ItemSwitchSameZoneArgs<TItem>(activeItem, draggedOverItem, Id));
+                    OnNoListChangeItemSwitchSameZone.InvokeAsync(new ItemSwitchSameZoneArgs<TItem>(activeItem, draggedOverItem));
                 }
             }
             else //no instant replace, just insert it after 
@@ -489,7 +492,7 @@ namespace Plk.Blazor.DragDrop
                 }
                 else
                 {
-                    OnNoListChangeItemDropSameZone.InvokeAsync(new ItemDropSameZoneArgs<TItem>(activeItem, indexDraggedOverItem, Id));
+                    OnNoListChangeItemDropSameZone.InvokeAsync(new ItemDropSameZoneArgs<TItem>(activeItem, indexDraggedOverItem));
                 }
             }
         }

@@ -413,7 +413,7 @@ namespace Plk.Blazor.DragDrop
                         }
                         else
                         {
-                            //TODO - emit event (create new 'copy' event)
+                            //TODO: Paul - emit event (create new 'copy' event)
                         }
                     }
                 }

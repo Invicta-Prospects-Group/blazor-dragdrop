@@ -398,16 +398,28 @@ namespace Plk.Blazor.DragDrop
                             Items.Insert(Items.Count, activeItem); //insert item to new zone
                             DragDropService.Items.Remove(activeItem); //remove from old zone
                         }
+                        else
+                        {
+                            OnNoListChangeItemDropDifferentZone.InvokeAsync(new ItemDropDifferentZoneArgs<TItem>(activeItem, Items.Count == 0 ? 0 : Items.Count + 1, DragDropService.Items));
+                            
+
+                        }
                     }
                     else
                     {
-                        if (!NoListChange) 
+                        if (!NoListChange)
+                        {
                             Items.Insert(Items.Count, CopyItem(activeItem)); //insert item to new zone
+                        }
+                        else
+                        {
+                            //TODO - emit event (create new 'copy' event)
+                        }
                     }
                 }
                 else
                 {
-                //what to do here?
+                    //what to do here?
                 }
             }
             else // we have a direct target

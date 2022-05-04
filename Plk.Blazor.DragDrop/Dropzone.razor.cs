@@ -389,6 +389,9 @@ namespace Plk.Blazor.DragDrop
             var activeItem = DragDropService.ActiveItem;
             if (DragDropService.DragTargetItem == null) //no direct drag target
             {
+                //TODO: Sometimes the DragDropService.DragTargetItem reports as null even though we dropped on an existing item
+                //This tends to happen when dropping across different dropzones and when dropping onto the first item in the target dropzone (anecdotally)
+
                 if (!Items.Contains(activeItem)) //if dragged to another dropzone
                 {
                     if (CopyItem == null)
@@ -400,7 +403,7 @@ namespace Plk.Blazor.DragDrop
                         }
                         else
                         {
-                            OnNoListChangeItemDropDifferentZone.InvokeAsync(new ItemDropDifferentZoneArgs<TItem>(activeItem, Items.Count == 0 ? 0 : Items.Count + 1, DragDropService.Items));
+                            OnNoListChangeItemDropDifferentZone.InvokeAsync(new ItemDropDifferentZoneArgs<TItem>(activeItem, Items.Count == 0 ? 0 : Items.Count, DragDropService.Items));
                             
 
                         }

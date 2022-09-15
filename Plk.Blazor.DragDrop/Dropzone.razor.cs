@@ -389,7 +389,7 @@ namespace Plk.Blazor.DragDrop
             var activeItem = DragDropService.ActiveItem;
             if (DragDropService.DragTargetItem == null) //no direct drag target
             {
-                //TODO: Sometimes the DragDropService.DragTargetItem reports as null even though we dropped on an existing item
+                //TODO: Drag n Drop - Sometimes the DragDropService.DragTargetItem reports as null even though we dropped on an existing item
                 //This tends to happen when dropping across different dropzones and when dropping onto the first item in the target dropzone (anecdotally)
 
                 if (!Items.Contains(activeItem)) //if dragged to another dropzone
@@ -416,7 +416,7 @@ namespace Plk.Blazor.DragDrop
                         }
                         else
                         {
-                            //TODO: Paul - emit event (create new 'copy' event)
+                            //TODO: Drag n Drop - Emit event (create new 'copy' event)
                         }
                     }
                 }
